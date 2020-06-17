@@ -1,4 +1,4 @@
-const { contract } = require('@openzeppelin/test-environment');
+
 
 const { BN, constants, expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 const { ZERO_ADDRESS } = constants;
@@ -7,7 +7,7 @@ const { expect } = require('chai');
 
 const { shouldSupportInterfaces } = require('../../introspection/SupportsInterface.behavior');
 
-const ERC1155ReceiverMock = contract.fromArtifact('ERC1155ReceiverMock');
+const ERC1155ReceiverMock = artifacts.require('ERC1155ReceiverMock');
 
 function shouldBehaveLikeERC1155 ([minter, firstTokenHolder, secondTokenHolder, multiTokenHolder, recipient, proxy]) {
   const firstTokenId = new BN(1);
@@ -20,8 +20,8 @@ function shouldBehaveLikeERC1155 ([minter, firstTokenHolder, secondTokenHolder, 
   const RECEIVER_SINGLE_MAGIC_VALUE = '0xf23a6e61';
   const RECEIVER_BATCH_MAGIC_VALUE = '0xbc197c81';
 
-  describe('like an ERC1155', function () {
-    describe('balanceOf', function () {
+  describe('like an ERC1155', async function () {
+    describe('balanceOf', async function () {
       it('reverts when queried about the zero address', async function () {
         await expectRevert(
           this.token.balanceOf(ZERO_ADDRESS, firstTokenId),
@@ -83,7 +83,7 @@ function shouldBehaveLikeERC1155 ([minter, firstTokenHolder, secondTokenHolder, 
       });
     });
 
-    describe('balanceOfBatch', function () {
+    describe('balanceOfBatch', async function () {
       it('reverts when input arrays don\'t match up', async function () {
         await expectRevert(
           this.token.balanceOfBatch(
@@ -146,7 +146,7 @@ function shouldBehaveLikeERC1155 ([minter, firstTokenHolder, secondTokenHolder, 
       });
     });
 
-    describe('setApprovalForAll', function () {
+    describe('setApprovalForAll', async function () {
       let logs;
       beforeEach(async function () {
         ({ logs } = await this.token.setApprovalForAll(proxy, true, { from: multiTokenHolder }));
@@ -173,7 +173,7 @@ function shouldBehaveLikeERC1155 ([minter, firstTokenHolder, secondTokenHolder, 
       });
     });
 
-    describe('safeTransferFrom', function () {
+    describe('safeTransferFrom', async function () {
       beforeEach(async function () {
         await this.token.mint(multiTokenHolder, firstTokenId, firstAmount, '0x', {
           from: minter,
@@ -426,7 +426,7 @@ function shouldBehaveLikeERC1155 ([minter, firstTokenHolder, secondTokenHolder, 
       });
     });
 
-    describe('safeBatchTransferFrom', function () {
+    describe('safeBatchTransferFrom', async function () {
       beforeEach(async function () {
         await this.token.mint(multiTokenHolder, firstTokenId, firstAmount, '0x', {
           from: minter,

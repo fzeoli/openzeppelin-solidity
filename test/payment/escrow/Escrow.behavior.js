@@ -5,8 +5,8 @@ const { expect } = require('chai');
 function shouldBehaveLikeEscrow (owner, [payee1, payee2]) {
   const amount = ether('42');
 
-  describe('as an escrow', function () {
-    describe('deposits', function () {
+  describe('as an escrow', async function () {
+    describe('deposits', async function () {
       it('can accept a single deposit', async function () {
         await this.escrow.deposit(payee1, { from: owner, value: amount });
 

@@ -1,14 +1,14 @@
-const { contract, accounts, web3 } = require('@openzeppelin/test-environment');
+
 const { balance, BN, ether, expectRevert, send } = require('@openzeppelin/test-helpers');
 
 const { expect } = require('chai');
 
-const Create2Impl = contract.fromArtifact('Create2Impl');
-const ERC20Mock = contract.fromArtifact('ERC20Mock');
-const ERC1820Implementer = contract.fromArtifact('ERC1820Implementer');
+const Create2Impl = artifacts.require('Create2Impl');
+const ERC20Mock = artifacts.require('ERC20Mock');
+const ERC1820Implementer = artifacts.require('ERC1820Implementer');
 
-describe('Create2', function () {
-  const [deployerAccount] = accounts;
+describe('Create2', async function () {
+  const [deployerAccount] = await web3.eth.getAccounts();
 
   const salt = 'salt message';
   const saltHex = web3.utils.soliditySha3(salt);

@@ -1,16 +1,16 @@
-const { accounts, contract, web3 } = require('@openzeppelin/test-environment');
+
 
 const { ether, expectEvent } = require('@openzeppelin/test-helpers');
 const gsn = require('@openzeppelin/gsn-helpers');
 
 const { expect } = require('chai');
 
-const GSNRecipientERC20FeeMock = contract.fromArtifact('GSNRecipientERC20FeeMock');
-const ERC20 = contract.fromArtifact('ERC20');
-const IRelayHub = contract.fromArtifact('IRelayHub');
+const GSNRecipientERC20FeeMock = artifacts.require('GSNRecipientERC20FeeMock');
+const ERC20 = artifacts.require('ERC20');
+const IRelayHub = artifacts.require('IRelayHub');
 
-describe('GSNRecipientERC20Fee', function () {
-  const [ sender ] = accounts;
+describe('GSNRecipientERC20Fee', async function () {
+  const [ sender ] = await web3.eth.getAccounts();
 
   const name = 'FeeToken';
   const symbol = 'FTKN';
@@ -20,7 +20,7 @@ describe('GSNRecipientERC20Fee', function () {
     this.token = await ERC20.at(await this.recipient.token());
   });
 
-  describe('token', function () {
+  describe('token', async function () {
     it('has a name', async function () {
       expect(await this.token.name()).to.equal(name);
     });

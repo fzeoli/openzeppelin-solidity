@@ -1,12 +1,12 @@
-const { accounts, contract } = require('@openzeppelin/test-environment');
+
 
 const { BN, ether, expectRevert } = require('@openzeppelin/test-helpers');
 const { shouldBehaveLikeERC20Capped } = require('./behaviors/ERC20Capped.behavior');
 
-const ERC20Capped = contract.fromArtifact('ERC20CappedMock');
+const ERC20Capped = artifacts.require('ERC20CappedMock');
 
-describe('ERC20Capped', function () {
-  const [ minter, ...otherAccounts ] = accounts;
+describe('ERC20Capped', async function () {
+  const [ minter, ...otherAccounts ] = await web3.eth.getAccounts();
 
   const cap = ether('1000');
 

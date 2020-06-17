@@ -1,14 +1,14 @@
-const { accounts, contract } = require('@openzeppelin/test-environment');
+
 
 const { BN, constants, expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 const { ZERO_ADDRESS } = constants;
 
 const { expect } = require('chai');
 
-const ERC721BurnableMock = contract.fromArtifact('ERC721BurnableMock');
+const ERC721BurnableMock = artifacts.require('ERC721BurnableMock');
 
-describe('ERC721Burnable', function () {
-  const [owner, approved] = accounts;
+describe('ERC721Burnable', async function () {
+  const [owner, approved] = await web3.eth.getAccounts();
 
   const firstTokenId = new BN(1);
   const secondTokenId = new BN(2);
@@ -21,17 +21,17 @@ describe('ERC721Burnable', function () {
     this.token = await ERC721BurnableMock.new(name, symbol);
   });
 
-  describe('like a burnable ERC721', function () {
+  describe('like a burnable ERC721', async function () {
     beforeEach(async function () {
       await this.token.mint(owner, firstTokenId);
       await this.token.mint(owner, secondTokenId);
     });
 
-    describe('burn', function () {
+    describe('burn', async function () {
       const tokenId = firstTokenId;
       let logs = null;
 
-      describe('when successful', function () {
+      describe('when successful', async function () {
         beforeEach(async function () {
           const result = await this.token.burn(tokenId, { from: owner });
           logs = result.logs;
@@ -54,7 +54,7 @@ describe('ERC721Burnable', function () {
         });
       });
 
-      describe('when there is a previous approval burned', function () {
+      describe('when there is a previous approval burned', async function () {
         beforeEach(async function () {
           await this.token.approve(approved, tokenId, { from: owner });
           const result = await this.token.burn(tokenId, { from: owner });
@@ -70,7 +70,7 @@ describe('ERC721Burnable', function () {
         });
       });
 
-      describe('when the given token ID was not tracked by this contract', function () {
+      describe('when the given token ID was not tracked by this contract', async function () {
         it('reverts', async function () {
           await expectRevert(
             this.token.burn(unknownTokenId, { from: owner }), 'ERC721: operator query for nonexistent token'

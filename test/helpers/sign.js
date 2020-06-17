@@ -1,4 +1,4 @@
-const { web3 } = require('@openzeppelin/test-environment');
+
 
 function toEthSignedMessageHash (messageHex) {
   const messageBuffer = Buffer.from(messageHex.substring(2), 'hex');

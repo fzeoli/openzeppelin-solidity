@@ -1,11 +1,11 @@
-const { contract } = require('@openzeppelin/test-environment');
+
 const { expectRevert } = require('@openzeppelin/test-helpers');
 
 const { expect } = require('chai');
 
-const CountersImpl = contract.fromArtifact('CountersImpl');
+const CountersImpl = artifacts.require('CountersImpl');
 
-describe('Counters', function () {
+describe('Counters', async function () {
   beforeEach(async function () {
     this.counter = await CountersImpl.new();
   });
@@ -14,7 +14,7 @@ describe('Counters', function () {
     expect(await this.counter.current()).to.be.bignumber.equal('0');
   });
 
-  describe('increment', function () {
+  describe('increment', async function () {
     it('increments the current value by one', async function () {
       await this.counter.increment();
       expect(await this.counter.current()).to.be.bignumber.equal('1');
@@ -29,7 +29,7 @@ describe('Counters', function () {
     });
   });
 
-  describe('decrement', function () {
+  describe('decrement', async function () {
     beforeEach(async function () {
       await this.counter.increment();
       expect(await this.counter.current()).to.be.bignumber.equal('1');

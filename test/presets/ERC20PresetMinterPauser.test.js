@@ -1,14 +1,14 @@
-const { accounts, contract, web3 } = require('@openzeppelin/test-environment');
+
 
 const { BN, constants, expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 const { ZERO_ADDRESS } = constants;
 
 const { expect } = require('chai');
 
-const ERC20PresetMinterPauser = contract.fromArtifact('ERC20PresetMinterPauser');
+const ERC20PresetMinterPauser = artifacts.require('ERC20PresetMinterPauser');
 
-describe('ERC20PresetMinterPauser', function () {
-  const [ deployer, other ] = accounts;
+describe('ERC20PresetMinterPauser', async function () {
+  const [ deployer, other ] = await web3.eth.getAccounts();
 
   const name = 'MinterPauserToken';
   const symbol = 'DRT';
@@ -43,7 +43,7 @@ describe('ERC20PresetMinterPauser', function () {
     expect(await this.token.getRoleAdmin(PAUSER_ROLE)).to.equal(DEFAULT_ADMIN_ROLE);
   });
 
-  describe('minting', function () {
+  describe('minting', async function () {
     it('deployer can mint tokens', async function () {
       const receipt = await this.token.mint(other, amount, { from: deployer });
       expectEvent(receipt, 'Transfer', { from: ZERO_ADDRESS, to: other, value: amount });
@@ -59,7 +59,7 @@ describe('ERC20PresetMinterPauser', function () {
     });
   });
 
-  describe('pausing', function () {
+  describe('pausing', async function () {
     it('deployer can pause', async function () {
       const receipt = await this.token.pause({ from: deployer });
       expectEvent(receipt, 'Paused', { account: deployer });
@@ -90,7 +90,7 @@ describe('ERC20PresetMinterPauser', function () {
     });
   });
 
-  describe('burning', function () {
+  describe('burning', async function () {
     it('holders can burn their tokens', async function () {
       await this.token.mint(other, amount, { from: deployer });
 

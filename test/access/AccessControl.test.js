@@ -1,13 +1,16 @@
-const { accounts, contract, web3 } = require('@openzeppelin/test-environment');
+
 
 const { expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 
 const { expect } = require('chai');
 
-const AccessControlMock = contract.fromArtifact('AccessControlMock');
+const AccessControlMock = artifacts.require('AccessControlMock');
+let accounts;
 
-describe('AccessControl', function () {
-  const [ admin, authorized, otherAuthorized, other, otherAdmin ] = accounts;
+
+describe('AccessControl', async function () {
+
+  const [admin, authorized, otherAuthorized, other, otherAdmin] = await web3.eth.getAccounts();
 
   const DEFAULT_ADMIN_ROLE = '0x0000000000000000000000000000000000000000000000000000000000000000';
   const ROLE = web3.utils.soliditySha3('ROLE');
@@ -17,7 +20,7 @@ describe('AccessControl', function () {
     this.accessControl = await AccessControlMock.new({ from: admin });
   });
 
-  describe('default admin', function () {
+  describe.only('default admin', async function () {
     it('deployer has default admin role', async function () {
       expect(await this.accessControl.hasRole(DEFAULT_ADMIN_ROLE, admin)).to.equal(true);
     });
@@ -31,7 +34,7 @@ describe('AccessControl', function () {
     });
   });
 
-  describe('granting', function () {
+  describe('granting', async function () {
     it('admin can grant role to other accounts', async function () {
       const receipt = await this.accessControl.grantRole(ROLE, authorized, { from: admin });
       expectEvent(receipt, 'RoleGranted', { account: authorized, role: ROLE, sender: admin });
@@ -53,7 +56,7 @@ describe('AccessControl', function () {
     });
   });
 
-  describe('revoking', function () {
+  describe('revoking', async function () {
     it('roles that are not had can be revoked', async function () {
       expect(await this.accessControl.hasRole(ROLE, authorized)).to.equal(false);
 
@@ -89,7 +92,7 @@ describe('AccessControl', function () {
     });
   });
 
-  describe('renouncing', function () {
+  describe('renouncing', async function () {
     it('roles that are not had can be renounced', async function () {
       const receipt = await this.accessControl.renounceRole(ROLE, authorized, { from: authorized });
       expectEvent.notEmitted(receipt, 'RoleRevoked');
@@ -123,7 +126,7 @@ describe('AccessControl', function () {
     });
   });
 
-  describe('enumerating', function () {
+  describe('enumerating', async function () {
     it('role bearers can be enumerated', async function () {
       await this.accessControl.grantRole(ROLE, authorized, { from: admin });
       await this.accessControl.grantRole(ROLE, otherAuthorized, { from: admin });
@@ -140,7 +143,7 @@ describe('AccessControl', function () {
     });
   });
 
-  describe('setting role admin', function () {
+  describe('setting role admin', async function () {
     beforeEach(async function () {
       const receipt = await this.accessControl.setRoleAdmin(ROLE, OTHER_ROLE);
       expectEvent(receipt, 'RoleAdminChanged', {

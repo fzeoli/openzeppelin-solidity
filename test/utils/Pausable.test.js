@@ -1,13 +1,13 @@
-const { accounts, contract } = require('@openzeppelin/test-environment');
+
 
 const { expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 
 const { expect } = require('chai');
 
-const PausableMock = contract.fromArtifact('PausableMock');
+const PausableMock = artifacts.require('PausableMock');
 
-describe('Pausable', function () {
-  const [ pauser ] = accounts;
+describe('Pausable', async function () {
+  const [ pauser ] = await web3.eth.getAccounts();
 
   beforeEach(async function () {
     this.pausable = await PausableMock.new();
@@ -54,7 +54,7 @@ describe('Pausable', function () {
         await expectRevert(this.pausable.pause(), 'Pausable: paused');
       });
 
-      describe('unpausing', function () {
+      describe('unpausing', async function () {
         it('is unpausable by the pauser', async function () {
           await this.pausable.unpause();
           expect(await this.pausable.paused()).to.equal(false);

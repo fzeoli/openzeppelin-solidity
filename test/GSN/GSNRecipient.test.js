@@ -1,4 +1,4 @@
-const { accounts, contract, web3 } = require('@openzeppelin/test-environment');
+
 
 const { balance, BN, constants, ether, expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 const { ZERO_ADDRESS } = constants;
@@ -7,13 +7,13 @@ const gsn = require('@openzeppelin/gsn-helpers');
 
 const { expect } = require('chai');
 
-const GSNRecipientMock = contract.fromArtifact('GSNRecipientMock');
-const ContextMockCaller = contract.fromArtifact('ContextMockCaller');
+const GSNRecipientMock = artifacts.require('GSNRecipientMock');
+const ContextMockCaller = artifacts.require('ContextMockCaller');
 
 const { shouldBehaveLikeRegularContext } = require('./Context.behavior');
 
-describe('GSNRecipient', function () {
-  const [ payee, sender, newRelayHub ] = accounts;
+describe('GSNRecipient', async function () {
+  const [ payee, sender, newRelayHub ] = await web3.eth.getAccounts();
 
   beforeEach(async function () {
     this.recipient = await GSNRecipientMock.new();
@@ -23,7 +23,7 @@ describe('GSNRecipient', function () {
     expect(await this.recipient.relayHubVersion()).to.equal('1.0.0');
   });
 
-  describe('get/set RelayHub', function () {
+  describe('get/set RelayHub', async function () {
     const singletonRelayHub = '0xD216153c06E857cD7f72665E0aF1d7D82172F494';
 
     it('initially returns the singleton instance address', async function () {
@@ -73,14 +73,14 @@ describe('GSNRecipient', function () {
       await gsn.fundRecipient(web3, { recipient: this.recipient.address });
     });
 
-    describe('msgSender', function () {
+    describe('msgSender', async function () {
       it('returns the relayed transaction original sender', async function () {
         const { tx } = await this.recipient.msgSender({ from: sender, useGSN: true });
         await expectEvent.inTransaction(tx, GSNRecipientMock, 'Sender', { sender });
       });
     });
 
-    describe('msgData', function () {
+    describe('msgData', async function () {
       it('returns the relayed transaction original data', async function () {
         const integerValue = new BN('42');
         const stringValue = 'OpenZeppelin';

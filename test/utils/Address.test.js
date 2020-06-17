@@ -1,20 +1,20 @@
-const { accounts, contract, web3 } = require('@openzeppelin/test-environment');
+
 
 const { balance, ether, expectRevert, send, expectEvent } = require('@openzeppelin/test-helpers');
 const { expect } = require('chai');
 
-const AddressImpl = contract.fromArtifact('AddressImpl');
-const EtherReceiver = contract.fromArtifact('EtherReceiverMock');
-const CallReceiverMock = contract.fromArtifact('CallReceiverMock');
+const AddressImpl = artifacts.require('AddressImpl');
+const EtherReceiver = artifacts.require('EtherReceiverMock');
+const CallReceiverMock = artifacts.require('CallReceiverMock');
 
-describe('Address', function () {
-  const [ recipient, other ] = accounts;
+describe('Address', async function () {
+  const [ recipient, other ] = await web3.eth.getAccounts();
 
   beforeEach(async function () {
     this.mock = await AddressImpl.new();
   });
 
-  describe('isContract', function () {
+  describe('isContract', async function () {
     it('should return false for account address', async function () {
       expect(await this.mock.isContract(other)).to.equal(false);
     });
@@ -25,7 +25,7 @@ describe('Address', function () {
     });
   });
 
-  describe('sendValue', function () {
+  describe('sendValue', async function () {
     beforeEach(async function () {
       this.recipientTracker = await balance.tracker(recipient);
     });
@@ -92,7 +92,7 @@ describe('Address', function () {
     });
   });
 
-  describe('functionCall', function () {
+  describe('functionCall', async function () {
     beforeEach(async function () {
       this.contractRecipient = await CallReceiverMock.new();
     });
@@ -179,7 +179,7 @@ describe('Address', function () {
 
     context('with non-contract receiver', function () {
       it('reverts when address is not a contract', async function () {
-        const [ recipient ] = accounts;
+        const [ recipient ] = await web3.eth.getAccounts();
         const abiEncodedCall = web3.eth.abi.encodeFunctionCall({
           name: 'mockFunction',
           type: 'function',
@@ -190,7 +190,7 @@ describe('Address', function () {
     });
   });
 
-  describe('functionCallWithValue', function () {
+  describe('functionCallWithValue', async function () {
     beforeEach(async function () {
       this.contractRecipient = await CallReceiverMock.new();
     });

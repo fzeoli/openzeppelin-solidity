@@ -1,13 +1,13 @@
-const { accounts, contract } = require('@openzeppelin/test-environment');
+
 const { BN } = require('@openzeppelin/test-helpers');
 
-const ERC1155Holder = contract.fromArtifact('ERC1155Holder');
-const ERC1155Mock = contract.fromArtifact('ERC1155Mock');
+const ERC1155Holder = artifacts.require('ERC1155Holder');
+const ERC1155Mock = artifacts.require('ERC1155Mock');
 
 const { expect } = require('chai');
 
-describe('ERC1155Holder', function () {
-  const [creator] = accounts;
+describe('ERC1155Holder', async function () {
+  const [creator] = await web3.eth.getAccounts();
 
   it('receives ERC1155 tokens', async function () {
     const uri = 'https://token-cdn-domain/{id}.json';

@@ -1,13 +1,13 @@
-const { accounts, contract } = require('@openzeppelin/test-environment');
+
 
 const { BN, expectRevert } = require('@openzeppelin/test-helpers');
 
 const { expect } = require('chai');
 
-const ERC20PausableMock = contract.fromArtifact('ERC20PausableMock');
+const ERC20PausableMock = artifacts.require('ERC20PausableMock');
 
-describe('ERC20Pausable', function () {
-  const [ holder, recipient, anotherAccount ] = accounts;
+describe('ERC20Pausable', async function () {
+  const [ holder, recipient, anotherAccount ] = await web3.eth.getAccounts();
 
   const initialSupply = new BN(100);
 
@@ -18,8 +18,8 @@ describe('ERC20Pausable', function () {
     this.token = await ERC20PausableMock.new(name, symbol, holder, initialSupply);
   });
 
-  describe('pausable token', function () {
-    describe('transfer', function () {
+  describe('pausable token', async function () {
+    describe('transfer', async function () {
       it('allows to transfer when unpaused', async function () {
         await this.token.transfer(recipient, initialSupply, { from: holder });
 
@@ -46,7 +46,7 @@ describe('ERC20Pausable', function () {
       });
     });
 
-    describe('transfer from', function () {
+    describe('transfer from', async function () {
       const allowance = new BN(40);
 
       beforeEach(async function () {
@@ -79,7 +79,7 @@ describe('ERC20Pausable', function () {
       });
     });
 
-    describe('mint', function () {
+    describe('mint', async function () {
       const amount = new BN('42');
 
       it('allows to mint when unpaused', async function () {
@@ -106,7 +106,7 @@ describe('ERC20Pausable', function () {
       });
     });
 
-    describe('burn', function () {
+    describe('burn', async function () {
       const amount = new BN('42');
 
       it('allows to burn when unpaused', async function () {

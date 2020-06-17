@@ -1,13 +1,13 @@
-const { accounts, contract } = require('@openzeppelin/test-environment');
+
 
 const { balance, ether } = require('@openzeppelin/test-helpers');
 
 const { expect } = require('chai');
 
-const PullPaymentMock = contract.fromArtifact('PullPaymentMock');
+const PullPaymentMock = artifacts.require('PullPaymentMock');
 
-describe('PullPayment', function () {
-  const [ payer, payee1, payee2 ] = accounts;
+describe('PullPayment', async function () {
+  const [ payer, payee1, payee2 ] = await web3.eth.getAccounts();
 
   const amount = ether('17');
 

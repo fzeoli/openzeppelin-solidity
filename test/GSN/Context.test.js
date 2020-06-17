@@ -1,14 +1,14 @@
-const { accounts, contract } = require('@openzeppelin/test-environment');
+
 
 require('@openzeppelin/test-helpers');
 
-const ContextMock = contract.fromArtifact('ContextMock');
-const ContextMockCaller = contract.fromArtifact('ContextMockCaller');
+const ContextMock = artifacts.require('ContextMock');
+const ContextMockCaller = artifacts.require('ContextMockCaller');
 
 const { shouldBehaveLikeRegularContext } = require('./Context.behavior');
 
-describe('Context', function () {
-  const [ sender ] = accounts;
+describe('Context', async function () {
+  const [ sender ] = await web3.eth.getAccounts();
 
   beforeEach(async function () {
     this.context = await ContextMock.new();

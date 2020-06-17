@@ -1,13 +1,13 @@
-const { accounts, contract } = require('@openzeppelin/test-environment');
+
 const { constants, expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 const { ZERO_ADDRESS } = constants;
 
 const { expect } = require('chai');
 
-const Ownable = contract.fromArtifact('OwnableMock');
+const Ownable = artifacts.require('OwnableMock');
 
-describe('Ownable', function () {
-  const [ owner, other ] = accounts;
+describe('Ownable', async function () {
+  const [owner, other] = await web3.eth.getAccounts();
 
   beforeEach(async function () {
     this.ownable = await Ownable.new({ from: owner });

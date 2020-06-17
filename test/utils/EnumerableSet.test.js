@@ -1,15 +1,15 @@
-const { accounts, contract } = require('@openzeppelin/test-environment');
+
 const { BN } = require('@openzeppelin/test-helpers');
 
-const EnumerableAddressSetMock = contract.fromArtifact('EnumerableAddressSetMock');
-const EnumerableUintSetMock = contract.fromArtifact('EnumerableUintSetMock');
+const EnumerableAddressSetMock = artifacts.require('EnumerableAddressSetMock');
+const EnumerableUintSetMock = artifacts.require('EnumerableUintSetMock');
 
 const { shouldBehaveLikeSet } = require('./EnumerableSet.behavior');
 
-describe('EnumerableSet', function () {
+describe('EnumerableSet', async function () {
   // AddressSet
-  describe('EnumerableAddressSet', function () {
-    const [ accountA, accountB, accountC ] = accounts;
+  describe('EnumerableAddressSet', async function () {
+    const [ accountA, accountB, accountC ] = await web3.eth.getAccounts();
 
     beforeEach(async function () {
       this.set = await EnumerableAddressSetMock.new();
@@ -19,7 +19,7 @@ describe('EnumerableSet', function () {
   });
 
   // UintSet
-  describe('EnumerableUintSet', function () {
+  describe('EnumerableUintSet', async function () {
     const uintA = new BN('1234');
     const uintB = new BN('5678');
     const uintC = new BN('9101112');

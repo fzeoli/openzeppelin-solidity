@@ -1,13 +1,13 @@
-const { accounts, contract } = require('@openzeppelin/test-environment');
+
 
 const { BN, expectRevert } = require('@openzeppelin/test-helpers');
 
 const { expect } = require('chai');
 
-const ERC1155PausableMock = contract.fromArtifact('ERC1155PausableMock');
+const ERC1155PausableMock = artifacts.require('ERC1155PausableMock');
 
-describe('ERC1155Pausable', function () {
-  const [ holder, operator, receiver, other ] = accounts;
+describe('ERC1155Pausable', async function () {
+  const [ holder, operator, receiver, other ] = await web3.eth.getAccounts();
 
   const uri = 'https://token.com';
 
@@ -87,21 +87,21 @@ describe('ERC1155Pausable', function () {
       );
     });
 
-    describe('setApprovalForAll', function () {
+    describe('setApprovalForAll', async function () {
       it('approves an operator', async function () {
         await this.token.setApprovalForAll(other, true, { from: holder });
         expect(await this.token.isApprovedForAll(holder, other)).to.equal(true);
       });
     });
 
-    describe('balanceOf', function () {
+    describe('balanceOf', async function () {
       it('returns the amount of tokens owned by the given address', async function () {
         const balance = await this.token.balanceOf(holder, firstTokenId);
         expect(balance).to.be.bignumber.equal(firstTokenAmount);
       });
     });
 
-    describe('isApprovedForAll', function () {
+    describe('isApprovedForAll', async function () {
       it('returns the approval of the operator', async function () {
         expect(await this.token.isApprovedForAll(holder, operator)).to.equal(true);
       });

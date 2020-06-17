@@ -1,14 +1,14 @@
-const { accounts, contract } = require('@openzeppelin/test-environment');
+
 
 const { BN, expectRevert, time } = require('@openzeppelin/test-helpers');
 
 const { expect } = require('chai');
 
-const ERC20Mock = contract.fromArtifact('ERC20Mock');
-const TokenTimelock = contract.fromArtifact('TokenTimelock');
+const ERC20Mock = artifacts.require('ERC20Mock');
+const TokenTimelock = artifacts.require('TokenTimelock');
 
-describe('TokenTimelock', function () {
-  const [ beneficiary ] = accounts;
+describe('TokenTimelock', async function () {
+  const [ beneficiary ] = await web3.eth.getAccounts();
 
   const name = 'My Token';
   const symbol = 'MTKN';

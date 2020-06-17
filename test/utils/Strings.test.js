@@ -1,16 +1,16 @@
-const { contract } = require('@openzeppelin/test-environment');
+
 const { constants } = require('@openzeppelin/test-helpers');
 
 const { expect } = require('chai');
 
-const StringsMock = contract.fromArtifact('StringsMock');
+const StringsMock = artifacts.require('StringsMock');
 
-describe('Strings', function () {
+describe('Strings', async function () {
   beforeEach(async function () {
     this.strings = await StringsMock.new();
   });
 
-  describe('from uint256', function () {
+  describe('from uint256', async function () {
     it('converts 0', async function () {
       expect(await this.strings.fromUint256(0)).to.equal('0');
     });

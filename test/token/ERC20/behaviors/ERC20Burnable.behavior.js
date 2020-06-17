@@ -4,8 +4,8 @@ const { ZERO_ADDRESS } = constants;
 const { expect } = require('chai');
 
 function shouldBehaveLikeERC20Burnable (owner, initialBalance, [burner]) {
-  describe('burn', function () {
-    describe('when the given amount is not greater than balance of the sender', function () {
+  describe('burn', async function () {
+    describe('when the given amount is not greater than balance of the sender', async function () {
       context('for a zero amount', function () {
         shouldBurn(new BN(0));
       });
@@ -33,7 +33,7 @@ function shouldBehaveLikeERC20Burnable (owner, initialBalance, [burner]) {
       }
     });
 
-    describe('when the given amount is greater than the balance of the sender', function () {
+    describe('when the given amount is greater than the balance of the sender', async function () {
       const amount = initialBalance.addn(1);
 
       it('reverts', async function () {
@@ -44,8 +44,8 @@ function shouldBehaveLikeERC20Burnable (owner, initialBalance, [burner]) {
     });
   });
 
-  describe('burnFrom', function () {
-    describe('on success', function () {
+  describe('burnFrom', async function () {
+    describe('on success', async function () {
       context('for a zero amount', function () {
         shouldBurnFrom(new BN(0));
       });
@@ -81,7 +81,7 @@ function shouldBehaveLikeERC20Burnable (owner, initialBalance, [burner]) {
       }
     });
 
-    describe('when the given amount is greater than the balance of the sender', function () {
+    describe('when the given amount is greater than the balance of the sender', async function () {
       const amount = initialBalance.addn(1);
 
       it('reverts', async function () {
@@ -92,7 +92,7 @@ function shouldBehaveLikeERC20Burnable (owner, initialBalance, [burner]) {
       });
     });
 
-    describe('when the given amount is greater than the allowance', function () {
+    describe('when the given amount is greater than the allowance', async function () {
       const allowance = new BN(100);
 
       it('reverts', async function () {

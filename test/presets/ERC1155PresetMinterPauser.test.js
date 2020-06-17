@@ -1,14 +1,14 @@
-const { accounts, contract, web3 } = require('@openzeppelin/test-environment');
+
 
 const { BN, constants, expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 const { ZERO_ADDRESS } = constants;
 
 const { expect } = require('chai');
 
-const ERC1155PresetMinterPauser = contract.fromArtifact('ERC1155PresetMinterPauser');
+const ERC1155PresetMinterPauser = artifacts.require('ERC1155PresetMinterPauser');
 
-describe('ERC1155PresetMinterPauser', function () {
-  const [ deployer, other ] = accounts;
+describe('ERC1155PresetMinterPauser', async function () {
+  const [ deployer, other ] = await web3.eth.getAccounts();
 
   const firstTokenId = new BN('845');
   const firstTokenIdAmount = new BN('5000');
@@ -46,7 +46,7 @@ describe('ERC1155PresetMinterPauser', function () {
     expect(await this.token.getRoleAdmin(PAUSER_ROLE)).to.equal(DEFAULT_ADMIN_ROLE);
   });
 
-  describe('minting', function () {
+  describe('minting', async function () {
     it('deployer can mint tokens', async function () {
       const receipt = await this.token.mint(other, firstTokenId, firstTokenIdAmount, '0x', { from: deployer });
       expectEvent(receipt, 'TransferSingle',
@@ -64,7 +64,7 @@ describe('ERC1155PresetMinterPauser', function () {
     });
   });
 
-  describe('batched minting', function () {
+  describe('batched minting', async function () {
     it('deployer can batch mint tokens', async function () {
       const receipt = await this.token.mintBatch(
         other, [firstTokenId, secondTokenId], [firstTokenIdAmount, secondTokenIdAmount], '0x', { from: deployer }
@@ -87,7 +87,7 @@ describe('ERC1155PresetMinterPauser', function () {
     });
   });
 
-  describe('pausing', function () {
+  describe('pausing', async function () {
     it('deployer can pause', async function () {
       const receipt = await this.token.pause({ from: deployer });
       expectEvent(receipt, 'Paused', { account: deployer });
@@ -121,7 +121,7 @@ describe('ERC1155PresetMinterPauser', function () {
     });
   });
 
-  describe('burning', function () {
+  describe('burning', async function () {
     it('holders can burn their tokens', async function () {
       await this.token.mint(other, firstTokenId, firstTokenIdAmount, '0x', { from: deployer });
 

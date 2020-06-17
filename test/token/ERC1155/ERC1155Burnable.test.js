@@ -1,13 +1,13 @@
-const { accounts, contract } = require('@openzeppelin/test-environment');
+
 
 const { BN, expectRevert } = require('@openzeppelin/test-helpers');
 
 const { expect } = require('chai');
 
-const ERC1155BurnableMock = contract.fromArtifact('ERC1155BurnableMock');
+const ERC1155BurnableMock = artifacts.require('ERC1155BurnableMock');
 
-describe('ERC1155Burnable', function () {
-  const [ holder, operator, other ] = accounts;
+describe('ERC1155Burnable', async function () {
+  const [ holder, operator, other ] = await web3.eth.getAccounts();
 
   const uri = 'https://token.com';
 
@@ -21,7 +21,7 @@ describe('ERC1155Burnable', function () {
     await this.token.mint(holder, tokenIds[1], amounts[1], '0x');
   });
 
-  describe('burn', function () {
+  describe('burn', async function () {
     it('holder can burn their tokens', async function () {
       await this.token.burn(holder, tokenIds[0], amounts[0].subn(1), { from: holder });
 
@@ -43,7 +43,7 @@ describe('ERC1155Burnable', function () {
     });
   });
 
-  describe('burnBatch', function () {
+  describe('burnBatch', async function () {
     it('holder can burn their tokens', async function () {
       await this.token.burnBatch(holder, tokenIds, [ amounts[0].subn(1), amounts[1].subn(2) ], { from: holder });
 

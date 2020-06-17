@@ -1,14 +1,14 @@
-const { accounts, contract, web3 } = require('@openzeppelin/test-environment');
+
 
 const { BN, constants, expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 const { ZERO_ADDRESS } = constants;
 
 const { expect } = require('chai');
 
-const ERC721PresetMinterPauserAutoId = contract.fromArtifact('ERC721PresetMinterPauserAutoId');
+const ERC721PresetMinterPauserAutoId = artifacts.require('ERC721PresetMinterPauserAutoId');
 
-describe('ERC721PresetMinterPauserAutoId', function () {
-  const [ deployer, other ] = accounts;
+describe('ERC721PresetMinterPauserAutoId', async function () {
+  const [ deployer, other ] = await web3.eth.getAccounts();
 
   const name = 'MinterAutoIDToken';
   const symbol = 'MAIT';
@@ -47,7 +47,7 @@ describe('ERC721PresetMinterPauserAutoId', function () {
     expect(await this.token.getRoleAdmin(MINTER_ROLE)).to.equal(DEFAULT_ADMIN_ROLE);
   });
 
-  describe('minting', function () {
+  describe('minting', async function () {
     it('deployer can mint tokens', async function () {
       const tokenId = new BN('0');
 
@@ -68,7 +68,7 @@ describe('ERC721PresetMinterPauserAutoId', function () {
     });
   });
 
-  describe('pausing', function () {
+  describe('pausing', async function () {
     it('deployer can pause', async function () {
       const receipt = await this.token.pause({ from: deployer });
       expectEvent(receipt, 'Paused', { account: deployer });
@@ -102,7 +102,7 @@ describe('ERC721PresetMinterPauserAutoId', function () {
     });
   });
 
-  describe('burning', function () {
+  describe('burning', async function () {
     it('holders can burn their tokens', async function () {
       const tokenId = new BN('0');
 

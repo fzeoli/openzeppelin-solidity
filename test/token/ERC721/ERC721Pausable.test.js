@@ -1,14 +1,14 @@
-const { accounts, contract } = require('@openzeppelin/test-environment');
+
 
 const { BN, constants, expectRevert } = require('@openzeppelin/test-helpers');
 const { ZERO_ADDRESS } = constants;
 
 const { expect } = require('chai');
 
-const ERC721PausableMock = contract.fromArtifact('ERC721PausableMock');
+const ERC721PausableMock = artifacts.require('ERC721PausableMock');
 
-describe('ERC721Pausable', function () {
-  const [ owner, receiver, operator ] = accounts;
+describe('ERC721Pausable', async function () {
+  const [ owner, receiver, operator ] = await web3.eth.getAccounts();
 
   const name = 'Non Fungible Token';
   const symbol = 'NFT';
@@ -64,34 +64,34 @@ describe('ERC721Pausable', function () {
       );
     });
 
-    describe('getApproved', function () {
+    describe('getApproved', async function () {
       it('returns approved address', async function () {
         const approvedAccount = await this.token.getApproved(firstTokenId);
         expect(approvedAccount).to.equal(ZERO_ADDRESS);
       });
     });
 
-    describe('balanceOf', function () {
+    describe('balanceOf', async function () {
       it('returns the amount of tokens owned by the given address', async function () {
         const balance = await this.token.balanceOf(owner);
         expect(balance).to.be.bignumber.equal('1');
       });
     });
 
-    describe('ownerOf', function () {
+    describe('ownerOf', async function () {
       it('returns the amount of tokens owned by the given address', async function () {
         const ownerOfToken = await this.token.ownerOf(firstTokenId);
         expect(ownerOfToken).to.equal(owner);
       });
     });
 
-    describe('exists', function () {
+    describe('exists', async function () {
       it('should return token existence', async function () {
         expect(await this.token.exists(firstTokenId)).to.equal(true);
       });
     });
 
-    describe('isApprovedForAll', function () {
+    describe('isApprovedForAll', async function () {
       it('returns the approval of the operator', async function () {
         expect(await this.token.isApprovedForAll(owner, operator)).to.equal(false);
       });

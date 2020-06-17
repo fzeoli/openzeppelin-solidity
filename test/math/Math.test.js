@@ -1,11 +1,11 @@
-const { contract } = require('@openzeppelin/test-environment');
+
 const { BN } = require('@openzeppelin/test-helpers');
 
 const { expect } = require('chai');
 
-const MathMock = contract.fromArtifact('MathMock');
+const MathMock = artifacts.require('MathMock');
 
-describe('Math', function () {
+describe('Math', async function () {
   const min = new BN('1234');
   const max = new BN('5678');
 
@@ -13,7 +13,7 @@ describe('Math', function () {
     this.math = await MathMock.new();
   });
 
-  describe('max', function () {
+  describe('max', async function () {
     it('is correctly detected in first argument position', async function () {
       expect(await this.math.max(max, min)).to.be.bignumber.equal(max);
     });
@@ -23,7 +23,7 @@ describe('Math', function () {
     });
   });
 
-  describe('min', function () {
+  describe('min', async function () {
     it('is correctly detected in first argument position', async function () {
       expect(await this.math.min(min, max)).to.be.bignumber.equal(min);
     });
@@ -33,7 +33,7 @@ describe('Math', function () {
     });
   });
 
-  describe('average', function () {
+  describe('average', async function () {
     function bnAverage (a, b) {
       return a.add(b).divn(2);
     }

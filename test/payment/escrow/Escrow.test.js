@@ -1,12 +1,12 @@
-const { accounts, contract } = require('@openzeppelin/test-environment');
+
 
 require('@openzeppelin/test-helpers');
 const { shouldBehaveLikeEscrow } = require('./Escrow.behavior');
 
-const Escrow = contract.fromArtifact('Escrow');
+const Escrow = artifacts.require('Escrow');
 
-describe('Escrow', function () {
-  const [ owner, ...otherAccounts ] = accounts;
+describe('Escrow', async function () {
+  const [ owner, ...otherAccounts ] = await web3.eth.getAccounts();
 
   beforeEach(async function () {
     this.escrow = await Escrow.new({ from: owner });

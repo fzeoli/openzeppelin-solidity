@@ -1,13 +1,13 @@
-const { contract } = require('@openzeppelin/test-environment');
+
 
 const { BN, constants, expectRevert } = require('@openzeppelin/test-helpers');
 const { MAX_INT256, MIN_INT256 } = constants;
 
 const { expect } = require('chai');
 
-const SignedSafeMathMock = contract.fromArtifact('SignedSafeMathMock');
+const SignedSafeMathMock = artifacts.require('SignedSafeMathMock');
 
-describe('SignedSafeMath', function () {
+describe('SignedSafeMath', async function () {
   beforeEach(async function () {
     this.safeMath = await SignedSafeMathMock.new();
   });
@@ -22,7 +22,7 @@ describe('SignedSafeMath', function () {
     await expectRevert(fn(rhs, lhs), reason);
   }
 
-  describe('add', function () {
+  describe('add', async function () {
     it('adds correctly if it does not overflow and the result is positive', async function () {
       const a = new BN('1234');
       const b = new BN('5678');
@@ -52,7 +52,7 @@ describe('SignedSafeMath', function () {
     });
   });
 
-  describe('sub', function () {
+  describe('sub', async function () {
     it('subtracts correctly if it does not overflow and the result is positive', async function () {
       const a = new BN('5678');
       const b = new BN('1234');
@@ -84,7 +84,7 @@ describe('SignedSafeMath', function () {
     });
   });
 
-  describe('mul', function () {
+  describe('mul', async function () {
     it('multiplies correctly', async function () {
       const a = new BN('5678');
       const b = new BN('-1234');
@@ -114,7 +114,7 @@ describe('SignedSafeMath', function () {
     });
   });
 
-  describe('div', function () {
+  describe('div', async function () {
     it('divides correctly', async function () {
       const a = new BN('-5678');
       const b = new BN('5678');

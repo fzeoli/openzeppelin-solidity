@@ -1,4 +1,4 @@
-const { accounts, contract, web3 } = require('@openzeppelin/test-environment');
+
 
 const { BN, constants, expectEvent, expectRevert, singletons } = require('@openzeppelin/test-helpers');
 const { ZERO_ADDRESS } = constants;
@@ -19,11 +19,11 @@ const {
   shouldBehaveLikeERC20Approve,
 } = require('../ERC20/ERC20.behavior');
 
-const ERC777 = contract.fromArtifact('ERC777Mock');
-const ERC777SenderRecipientMock = contract.fromArtifact('ERC777SenderRecipientMock');
+const ERC777 = artifacts.require('ERC777Mock');
+const ERC777SenderRecipientMock = artifacts.require('ERC777SenderRecipientMock');
 
-describe('ERC777', function () {
-  const [ registryFunder, holder, defaultOperatorA, defaultOperatorB, newOperator, anyone ] = accounts;
+describe('ERC777', async function () {
+  const [ registryFunder, holder, defaultOperatorA, defaultOperatorB, newOperator, anyone ] = await web3.eth.getAccounts();
 
   const initialSupply = new BN('10000');
   const name = 'ERC777Test';
@@ -42,15 +42,15 @@ describe('ERC777', function () {
       this.token = await ERC777.new(holder, initialSupply, name, symbol, defaultOperators);
     });
 
-    describe('as an ERC20 token', function () {
+    describe('as an ERC20 token', async function () {
       shouldBehaveLikeERC20('ERC777', initialSupply, holder, anyone, defaultOperatorA);
 
-      describe('_approve', function () {
+      describe('_approve', async function () {
         shouldBehaveLikeERC20Approve('ERC777', holder, anyone, initialSupply, function (owner, spender, amount) {
           return this.token.approveInternal(owner, spender, amount);
         });
 
-        describe('when the owner is the zero address', function () {
+        describe('when the owner is the zero address', async function () {
           it('reverts', async function () {
             await expectRevert(this.token.approveInternal(ZERO_ADDRESS, anyone, initialSupply),
               'ERC777: approve from the zero address'
@@ -64,7 +64,7 @@ describe('ERC777', function () {
       await expectEvent.notEmitted.inConstruction(this.token, 'AuthorizedOperator');
     });
 
-    describe('basic information', function () {
+    describe('basic information', async function () {
       it('returns the name', async function () {
         expect(await this.token.name()).to.equal(name);
       });
@@ -106,7 +106,7 @@ describe('ERC777', function () {
       });
     });
 
-    describe('balanceOf', function () {
+    describe('balanceOf', async function () {
       context('for an account with no tokens', function () {
         it('returns zero', async function () {
           expect(await this.token.balanceOf(anyone)).to.be.bignumber.equal('0');
@@ -121,7 +121,7 @@ describe('ERC777', function () {
     });
 
     context('with no ERC777TokensSender and no ERC777TokensRecipient implementers', function () {
-      describe('send/burn', function () {
+      describe('send/burn', async function () {
         shouldBehaveLikeERC777DirectSendBurn(holder, anyone, data);
 
         context('with self operator', function () {
@@ -157,7 +157,7 @@ describe('ERC777', function () {
         });
       });
 
-      describe('mint (internal)', function () {
+      describe('mint (internal)', async function () {
         const to = anyone;
         const amount = new BN('5');
 
@@ -175,7 +175,7 @@ describe('ERC777', function () {
       });
     });
 
-    describe('operator management', function () {
+    describe('operator management', async function () {
       it('accounts are their own operator', async function () {
         expect(await this.token.isOperatorFor(holder, holder)).to.equal(true);
       });
@@ -210,7 +210,7 @@ describe('ERC777', function () {
         expect(await this.token.isOperatorFor(newOperator, holder)).to.equal(true);
       });
 
-      describe('new operators', function () {
+      describe('new operators', async function () {
         beforeEach(async function () {
           await this.token.authorizeOperator(newOperator, { from: holder });
         });
@@ -234,7 +234,7 @@ describe('ERC777', function () {
         });
       });
 
-      describe('default operators', function () {
+      describe('default operators', async function () {
         it('can be re-authorized', async function () {
           const { logs } = await this.token.authorizeOperator(defaultOperatorA, { from: holder });
           expectEvent.inLogs(logs, 'AuthorizedOperator', { operator: defaultOperatorA, tokenHolder: holder });
@@ -283,12 +283,12 @@ describe('ERC777', function () {
       });
     });
 
-    describe('send and receive hooks', function () {
+    describe('send and receive hooks', async function () {
       const amount = new BN('1');
       const operator = defaultOperatorA;
       // sender and recipient are stored inside 'this', since in some tests their addresses are determined dynamically
 
-      describe('tokensReceived', function () {
+      describe('tokensReceived', async function () {
         beforeEach(function () {
           this.sender = holder;
         });
@@ -379,7 +379,7 @@ describe('ERC777', function () {
         });
       });
 
-      describe('tokensToSend', function () {
+      describe('tokensToSend', async function () {
         beforeEach(function () {
           this.recipient = anyone;
         });

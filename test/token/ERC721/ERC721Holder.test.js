@@ -1,14 +1,14 @@
-const { accounts, contract } = require('@openzeppelin/test-environment');
+
 
 const { BN } = require('@openzeppelin/test-helpers');
 
 const { expect } = require('chai');
 
-const ERC721Holder = contract.fromArtifact('ERC721Holder');
-const ERC721Mock = contract.fromArtifact('ERC721Mock');
+const ERC721Holder = artifacts.require('ERC721Holder');
+const ERC721Mock = artifacts.require('ERC721Mock');
 
-describe('ERC721Holder', function () {
-  const [ owner ] = accounts;
+describe('ERC721Holder', async function () {
+  const [ owner ] = await web3.eth.getAccounts();
 
   const name = 'Non Fungible Token';
   const symbol = 'NFT';

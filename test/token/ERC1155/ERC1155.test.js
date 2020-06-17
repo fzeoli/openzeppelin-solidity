@@ -1,4 +1,4 @@
-const { accounts, contract } = require('@openzeppelin/test-environment');
+
 
 const { BN, constants, expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 const { ZERO_ADDRESS } = constants;
@@ -6,10 +6,10 @@ const { ZERO_ADDRESS } = constants;
 const { expect } = require('chai');
 
 const { shouldBehaveLikeERC1155 } = require('./ERC1155.behavior');
-const ERC1155Mock = contract.fromArtifact('ERC1155Mock');
+const ERC1155Mock = artifacts.require('ERC1155Mock');
 
-describe('ERC1155', function () {
-  const [operator, tokenHolder, tokenBatchHolder, ...otherAccounts] = accounts;
+describe('ERC1155', async function () {
+  const [operator, tokenHolder, tokenBatchHolder, ...otherAccounts] = await web3.eth.getAccounts();
 
   const initialURI = 'https://token-cdn-domain/{id}.json';
 
@@ -19,7 +19,7 @@ describe('ERC1155', function () {
 
   shouldBehaveLikeERC1155(otherAccounts);
 
-  describe('internal functions', function () {
+  describe('internal functions', async function () {
     const tokenId = new BN(1990);
     const mintAmount = new BN(9001);
     const burnAmount = new BN(3000);
@@ -30,7 +30,7 @@ describe('ERC1155', function () {
 
     const data = '0xcafebabe';
 
-    describe('_mint', function () {
+    describe('_mint', async function () {
       it('reverts with a zero destination address', async function () {
         await expectRevert(
           this.token.mint(ZERO_ADDRESS, tokenId, mintAmount, data),
@@ -59,7 +59,7 @@ describe('ERC1155', function () {
       });
     });
 
-    describe('_mintBatch', function () {
+    describe('_mintBatch', async function () {
       it('reverts with a zero destination address', async function () {
         await expectRevert(
           this.token.mintBatch(ZERO_ADDRESS, tokenBatchIds, mintAmounts, data),
@@ -106,7 +106,7 @@ describe('ERC1155', function () {
       });
     });
 
-    describe('_burn', function () {
+    describe('_burn', async function () {
       it('reverts when burning the zero account\'s tokens', async function () {
         await expectRevert(
           this.token.burn(ZERO_ADDRESS, tokenId, mintAmount),
@@ -151,7 +151,7 @@ describe('ERC1155', function () {
       });
     });
 
-    describe('_burnBatch', function () {
+    describe('_burnBatch', async function () {
       it('reverts when burning the zero account\'s tokens', async function () {
         await expectRevert(
           this.token.burnBatch(ZERO_ADDRESS, tokenBatchIds, burnAmounts),
@@ -208,7 +208,7 @@ describe('ERC1155', function () {
     });
   });
 
-  describe('ERC1155MetadataURI', function () {
+  describe('ERC1155MetadataURI', async function () {
     const firstTokenID = new BN('42');
     const secondTokenID = new BN('1337');
 
@@ -221,7 +221,7 @@ describe('ERC1155', function () {
       expect(await this.token.uri(secondTokenID)).to.be.equal(initialURI);
     });
 
-    describe('_setURI', function () {
+    describe('_setURI', async function () {
       const newURI = 'https://token-cdn-domain/{locale}/{id}.json';
 
       it('emits no URI event', async function () {

@@ -1,12 +1,12 @@
-const { contract } = require('@openzeppelin/test-environment');
+
 const { BN, constants, expectRevert } = require('@openzeppelin/test-helpers');
 const { MAX_UINT256 } = constants;
 
 const { expect } = require('chai');
 
-const SafeMathMock = contract.fromArtifact('SafeMathMock');
+const SafeMathMock = artifacts.require('SafeMathMock');
 
-describe('SafeMath', function () {
+describe('SafeMath', async function () {
   beforeEach(async function () {
     this.safeMath = await SafeMathMock.new();
   });
@@ -21,7 +21,7 @@ describe('SafeMath', function () {
     await expectRevert(fn(rhs, lhs), reason);
   }
 
-  describe('add', function () {
+  describe('add', async function () {
     it('adds correctly', async function () {
       const a = new BN('5678');
       const b = new BN('1234');
@@ -37,7 +37,7 @@ describe('SafeMath', function () {
     });
   });
 
-  describe('sub', function () {
+  describe('sub', async function () {
     it('subtracts correctly', async function () {
       const a = new BN('5678');
       const b = new BN('1234');
@@ -53,7 +53,7 @@ describe('SafeMath', function () {
     });
   });
 
-  describe('mul', function () {
+  describe('mul', async function () {
     it('multiplies correctly', async function () {
       const a = new BN('1234');
       const b = new BN('5678');
@@ -76,7 +76,7 @@ describe('SafeMath', function () {
     });
   });
 
-  describe('div', function () {
+  describe('div', async function () {
     it('divides correctly', async function () {
       const a = new BN('5678');
       const b = new BN('5678');
@@ -106,7 +106,7 @@ describe('SafeMath', function () {
     });
   });
 
-  describe('mod', function () {
+  describe('mod', async function () {
     describe('modulos correctly', async function () {
       it('when the dividend is smaller than the divisor', async function () {
         const a = new BN('284');

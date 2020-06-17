@@ -1,14 +1,14 @@
-const { accounts, contract } = require('@openzeppelin/test-environment');
+
 
 const { balance, constants, ether, expectEvent, send, expectRevert } = require('@openzeppelin/test-helpers');
 const { ZERO_ADDRESS } = constants;
 
 const { expect } = require('chai');
 
-const PaymentSplitter = contract.fromArtifact('PaymentSplitter');
+const PaymentSplitter = artifacts.require('PaymentSplitter');
 
-describe('PaymentSplitter', function () {
-  const [ owner, payee1, payee2, payee3, nonpayee1, payer1 ] = accounts;
+describe('PaymentSplitter', async function () {
+  const [ owner, payee1, payee2, payee3, nonpayee1, payer1 ] = await web3.eth.getAccounts();
 
   const amount = ether('1');
 

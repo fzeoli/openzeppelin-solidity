@@ -1,4 +1,4 @@
-const { accounts, contract } = require('@openzeppelin/test-environment');
+
 
 const { BN, constants, expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 const { ZERO_ADDRESS } = constants;
@@ -7,11 +7,11 @@ const { expect } = require('chai');
 
 const { shouldSupportInterfaces } = require('../../introspection/SupportsInterface.behavior');
 
-const ERC721Mock = contract.fromArtifact('ERC721Mock');
-const ERC721ReceiverMock = contract.fromArtifact('ERC721ReceiverMock');
+const ERC721Mock = artifacts.require('ERC721Mock');
+const ERC721ReceiverMock = artifacts.require('ERC721ReceiverMock');
 
-describe('ERC721', function () {
-  const [owner, newOwner, approved, anotherApproved, operator, other] = accounts;
+describe('ERC721', async function () {
+  const [owner, newOwner, approved, anotherApproved, operator, other] = await web3.eth.getAccounts();
 
   const name = 'Non Fungible Token';
   const symbol = 'NFT';
@@ -33,7 +33,7 @@ describe('ERC721', function () {
     'ERC721Metadata',
   ]);
 
-  describe('metadata', function () {
+  describe('metadata', async function () {
     it('has a name', async function () {
       expect(await this.token.name()).to.be.equal(name);
     });
@@ -42,7 +42,7 @@ describe('ERC721', function () {
       expect(await this.token.symbol()).to.be.equal(symbol);
     });
 
-    describe('token URI', function () {
+    describe('token URI', async function () {
       beforeEach(async function () {
         await this.token.mint(owner, firstTokenId);
       });
@@ -118,7 +118,7 @@ describe('ERC721', function () {
       this.toWhom = other; // default to other for toWhom in context-dependent tests
     });
 
-    describe('balanceOf', function () {
+    describe('balanceOf', async function () {
       context('when the given address owns some tokens', function () {
         it('returns the amount of tokens owned by the given address', async function () {
           expect(await this.token.balanceOf(owner)).to.be.bignumber.equal('2');
@@ -140,7 +140,7 @@ describe('ERC721', function () {
       });
     });
 
-    describe('ownerOf', function () {
+    describe('ownerOf', async function () {
       context('when the given token ID was tracked by this token', function () {
         const tokenId = firstTokenId;
 
@@ -160,7 +160,7 @@ describe('ERC721', function () {
       });
     });
 
-    describe('transfers', function () {
+    describe('transfers', async function () {
       const tokenId = firstTokenId;
       const data = '0x42';
 
@@ -304,13 +304,13 @@ describe('ERC721', function () {
         });
       };
 
-      describe('via transferFrom', function () {
+      describe('via transferFrom', async function () {
         shouldTransferTokensByUsers(function (from, to, tokenId, opts) {
           return this.token.transferFrom(from, to, tokenId, opts);
         });
       });
 
-      describe('via safeTransferFrom', function () {
+      describe('via safeTransferFrom', async function () {
         const safeTransferFromWithData = function (from, to, tokenId, opts) {
           return this.token.methods['safeTransferFrom(address,address,uint256,bytes)'](from, to, tokenId, data, opts);
         };
@@ -320,11 +320,11 @@ describe('ERC721', function () {
         };
 
         const shouldTransferSafely = function (transferFun, data) {
-          describe('to a user account', function () {
+          describe('to a user account', async function () {
             shouldTransferTokensByUsers(transferFun);
           });
 
-          describe('to a valid receiver contract', function () {
+          describe('to a valid receiver contract', async function () {
             beforeEach(async function () {
               this.receiver = await ERC721ReceiverMock.new(RECEIVER_MAGIC_VALUE, false);
               this.toWhom = this.receiver.address;
@@ -354,7 +354,7 @@ describe('ERC721', function () {
               });
             });
 
-            describe('with an invalid token id', function () {
+            describe('with an invalid token id', async function () {
               it('reverts', async function () {
                 await expectRevert(
                   transferFun.call(
@@ -371,15 +371,15 @@ describe('ERC721', function () {
           });
         };
 
-        describe('with data', function () {
+        describe('with data', async function () {
           shouldTransferSafely(safeTransferFromWithData, data);
         });
 
-        describe('without data', function () {
+        describe('without data', async function () {
           shouldTransferSafely(safeTransferFromWithoutData, null);
         });
 
-        describe('to a receiver contract returning unexpected value', function () {
+        describe('to a receiver contract returning unexpected value', async function () {
           it('reverts', async function () {
             const invalidReceiver = await ERC721ReceiverMock.new('0x42', false);
             await expectRevert(
@@ -389,7 +389,7 @@ describe('ERC721', function () {
           });
         });
 
-        describe('to a receiver contract that throws', function () {
+        describe('to a receiver contract that throws', async function () {
           it('reverts', async function () {
             const revertingReceiver = await ERC721ReceiverMock.new(RECEIVER_MAGIC_VALUE, true);
             await expectRevert(
@@ -399,7 +399,7 @@ describe('ERC721', function () {
           });
         });
 
-        describe('to a contract that does not implement the required function', function () {
+        describe('to a contract that does not implement the required function', async function () {
           it('reverts', async function () {
             const nonReceiver = this.token;
             await expectRevert(
@@ -411,12 +411,12 @@ describe('ERC721', function () {
       });
     });
 
-    describe('safe mint', function () {
+    describe('safe mint', async function () {
       const fourthTokenId = new BN(4);
       const tokenId = fourthTokenId;
       const data = '0x42';
 
-      describe('via safeMint', function () { // regular minting is tested in ERC721Mintable.test.js and others
+      describe('via safeMint', async function () { // regular minting is tested in ERC721Mintable.test.js and others
         it('should call onERC721Received — with data', async function () {
           this.receiver = await ERC721ReceiverMock.new(RECEIVER_MAGIC_VALUE, false);
           const receipt = await this.token.safeMint(this.receiver.address, tokenId, data);
@@ -470,7 +470,7 @@ describe('ERC721', function () {
       });
     });
 
-    describe('approve', function () {
+    describe('approve', async function () {
       const tokenId = firstTokenId;
 
       let logs = null;
@@ -590,7 +590,7 @@ describe('ERC721', function () {
       });
     });
 
-    describe('setApprovalForAll', function () {
+    describe('setApprovalForAll', async function () {
       context('when the operator willing to approve is not the owner', function () {
         context('when there is no operator approval set by the sender', function () {
           it('approves the operator', async function () {
@@ -698,20 +698,20 @@ describe('ERC721', function () {
       });
     });
 
-    describe('totalSupply', function () {
+    describe('totalSupply', async function () {
       it('returns total token supply', async function () {
         expect(await this.token.totalSupply()).to.be.bignumber.equal('2');
       });
     });
 
-    describe('tokenOfOwnerByIndex', function () {
-      describe('when the given index is lower than the amount of tokens owned by the given address', function () {
+    describe('tokenOfOwnerByIndex', async function () {
+      describe('when the given index is lower than the amount of tokens owned by the given address', async function () {
         it('returns the token ID placed at the given index', async function () {
           expect(await this.token.tokenOfOwnerByIndex(owner, 0)).to.be.bignumber.equal(firstTokenId);
         });
       });
 
-      describe('when the index is greater than or equal to the total tokens owned by the given address', function () {
+      describe('when the index is greater than or equal to the total tokens owned by the given address', async function () {
         it('reverts', async function () {
           await expectRevert(
             this.token.tokenOfOwnerByIndex(owner, 2), 'EnumerableSet: index out of bounds'
@@ -719,7 +719,7 @@ describe('ERC721', function () {
         });
       });
 
-      describe('when the given address does not own any token', function () {
+      describe('when the given address does not own any token', async function () {
         it('reverts', async function () {
           await expectRevert(
             this.token.tokenOfOwnerByIndex(other, 0), 'EnumerableSet: index out of bounds'
@@ -727,7 +727,7 @@ describe('ERC721', function () {
         });
       });
 
-      describe('after transferring all tokens to another user', function () {
+      describe('after transferring all tokens to another user', async function () {
         beforeEach(async function () {
           await this.token.transferFrom(owner, other, firstTokenId, { from: owner });
           await this.token.transferFrom(owner, other, secondTokenId, { from: owner });
@@ -751,7 +751,7 @@ describe('ERC721', function () {
       });
     });
 
-    describe('tokenByIndex', function () {
+    describe('tokenByIndex', async function () {
       it('should return all tokens', async function () {
         const tokensListed = await Promise.all(
           [0, 1].map(i => this.token.tokenByIndex(i))
@@ -789,7 +789,7 @@ describe('ERC721', function () {
     });
   });
 
-  describe('_mint(address, uint256)', function () {
+  describe('_mint(address, uint256)', async function () {
     it('reverts with a null destination address', async function () {
       await expectRevert(
         this.token.mint(ZERO_ADDRESS, firstTokenId), 'ERC721: mint to the zero address'
@@ -824,7 +824,7 @@ describe('ERC721', function () {
     });
   });
 
-  describe('_burn', function () {
+  describe('_burn', async function () {
     it('reverts when burning a non-existent token id', async function () {
       await expectRevert(
         this.token.burn(firstTokenId), 'ERC721: owner query for nonexistent token'

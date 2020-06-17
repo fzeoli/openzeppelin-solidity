@@ -1,12 +1,12 @@
-const { accounts, contract } = require('@openzeppelin/test-environment');
+
 
 const { BN, expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
-const ERC20SnapshotMock = contract.fromArtifact('ERC20SnapshotMock');
+const ERC20SnapshotMock = artifacts.require('ERC20SnapshotMock');
 
 const { expect } = require('chai');
 
-describe('ERC20Snapshot', function () {
-  const [ initialHolder, recipient, other ] = accounts;
+describe('ERC20Snapshot', async function () {
+  const [ initialHolder, recipient, other ] = await web3.eth.getAccounts();
 
   const initialSupply = new BN(100);
 
@@ -17,7 +17,7 @@ describe('ERC20Snapshot', function () {
     this.token = await ERC20SnapshotMock.new(name, symbol, initialHolder, initialSupply);
   });
 
-  describe('snapshot', function () {
+  describe('snapshot', async function () {
     it('emits a snapshot event', async function () {
       const { logs } = await this.token.snapshot();
       expectEvent.inLogs(logs, 'Snapshot');
@@ -31,7 +31,7 @@ describe('ERC20Snapshot', function () {
     });
   });
 
-  describe('totalSupplyAt', function () {
+  describe('totalSupplyAt', async function () {
     it('reverts with a snapshot id of 0', async function () {
       await expectRevert(this.token.totalSupplyAt(0), 'ERC20Snapshot: id is 0');
     });
@@ -105,7 +105,7 @@ describe('ERC20Snapshot', function () {
     });
   });
 
-  describe('balanceOfAt', function () {
+  describe('balanceOfAt', async function () {
     it('reverts with a snapshot id of 0', async function () {
       await expectRevert(this.token.balanceOfAt(other, 0), 'ERC20Snapshot: id is 0');
     });
